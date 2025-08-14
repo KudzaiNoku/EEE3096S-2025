@@ -51,6 +51,9 @@
   checksum: should be uint64_t
   initial width and height maybe or you might opt for an array??
 */
+volatile uint32_t start_time = 0, end_time = 0, execution_time = 0;
+volatile uint64_t checksum = 0;
+const uint16_t img_dimensions[] = {128, 160, 192, 224, 256};
 
 /* USER CODE END PV */
 
