@@ -23,6 +23,8 @@
 /* USER CODE BEGIN Includes */
 #include <stdint.h>
 #include "stm32f0xx.h"
+#include <sys/stat.h>
+#include <errno.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -63,7 +65,31 @@ static void MX_GPIO_Init(void);
 /* USER CODE BEGIN PFP */
 uint64_t calculate_mandelbrot_fixed_point_arithmetic(int width, int height, int max_iterations);
 uint64_t calculate_mandelbrot_double(int width, int height, int max_iterations);
+volatile uint32_t time_fp[5], time_dp[5];
+volatile uint64_t sum_fp[5],  sum_dp[5];
 
+typedef char* caddr_t;
+
+int _write(int file, const char *ptr, int len) { (void)file; (void)ptr; return len; }
+int _close(int file)                          { (void)file; errno = EBADF;  return -1; }
+int _lseek(int file, int ptr, int dir)        { (void)file; (void)ptr; (void)dir; errno = ESPIPE; return -1; }
+int _read(int file, char *ptr, int len)       { (void)file; (void)ptr; (void)len; errno = EBADF;  return -1; }
+int _fstat(int file, struct stat *st)         { (void)file; st->st_mode = S_IFCHR; return 0; }
+int _isatty(int file)                         { (void)file; return 1; }
+int _kill(int pid, int sig)                   { (void)pid; (void)sig; errno = EINVAL; return -1; }
+int _getpid(void)                             { return 1; }
+void _exit(int status)                        { (void)status; while (1) {} }
+
+/* tiny heap so malloc/newlib won’t hard-fault */
+caddr_t _sbrk(int incr) {
+    extern char _end;              /* defined by the linker script */
+    static char *heap_end;
+    if (!heap_end) heap_end = &_end;
+    char *prev = heap_end;
+    heap_end += incr;
+    return (caddr_t)prev;
+}
+/* --- end stubs --- */
 
 /* USER CODE END PFP */
 
@@ -76,6 +102,12 @@ uint64_t calculate_mandelbrot_double(int width, int height, int max_iterations);
   * @brief  The application entry point.
   * @retval int
   */
+
+static inline void busy_delay_ms(uint32_t ms) {
+    volatile uint32_t cycles = (SystemCoreClock/8000u) * ms; // rough ≈1ms
+    while (cycles--) { __NOP(); }
+}
+
 int main(void)
 {
   /* USER CODE BEGIN 1 */
@@ -86,6 +118,13 @@ int main(void)
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
+  /* keep TIM14 running while the core is halted by the debugger */
+  #ifdef DBGMCU_APB1_FZ_DBG_TIM14_STOP
+      DBGMCU->APB1FZ &= ~DBGMCU_APB1_FZ_DBG_TIM14_STOP;
+  #else
+      /* Fallback if the macro isn’t defined in your headers */
+      DBGMCU->APB1FZ &= ~(1u << 16);   // common bit position for TIM14 on F0
+  #endif
 
   /* USER CODE BEGIN Init */
 
@@ -100,7 +139,28 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+
   /* USER CODE BEGIN 2 */
+  /* === Single run, no loops === */
+  int dimension = (int)img_dimensions[0];
+
+  GPIOB->BSRR = (1u << 0);              // LED0 ON  (start marker)
+
+  start_time = HAL_GetTick();           // t0
+
+  checksum = calculate_mandelbrot_fixed_point_arithmetic(dimension, dimension, MAX_ITER);
+  // OR: checksum = calculate_mandelbrot_double(WIDTH, HEIGHT, MAX_ITER);
+
+  end_time = HAL_GetTick();             // t1
+  execution_time = end_time - start_time;
+
+  GPIOB->BSRR = (1u << 1);              // LED1 ON  (done marker)
+  busy_delay_ms(1000);                  // keep LEDs visible for a moment
+
+  /* optional: turn both LEDs off */
+  GPIOB->BSRR = (1u << (0 + 16)) | (1u << (1 + 16));   // reset PB0 & PB1
+  //start_time = 111; end_time = 222; execution_time = 333;
+
   //TODO: Turn on LED 0 to signify the start of the operation
   
 
@@ -123,7 +183,26 @@ int main(void)
   
 
   //TODO: Turn off the LEDs
-  
+/*
+
+  for (int i = 0; i < 5; ++i) {
+      int w = img_dimensions[i];
+
+      // ---- Fixed-point run ----
+      GPIOB->ODR |= (1<<0);                  // LED0: start
+      start_time  = HAL_GetTick();
+      sum_fp[i]   = calculate_mandelbrot_fixed_point_arithmetic(w, w, MAX_ITER);
+      end_time    = HAL_GetTick();
+      time_fp[i]  = end_time - start_time;
+      GPIOB->ODR |= (1<<1);                     // LED1: end
+      HAL_Delay(1000);
+      //GPIOB->BSRR = GPIO_BSRR_BR_0 | GPIO_BSRR_BR_1;             // clear LEDs
+
+  }
+*/
+  // optional: keep last results in the single vars you already have
+ // checksum       = sum_fp[4];
+//  execution_time = time_fp[4];
 
   /* USER CODE END 2 */
 
@@ -131,7 +210,10 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    /* USER CODE END WHILE */
+    /* USER CODE END WHILE
+	  GPIOB->ODR |= (1<<0);
+	  checksum       = sum_fp[4];
+	  execution_time = time_fp[4];
 
     /* USER CODE BEGIN 3 */
   }
@@ -205,21 +287,77 @@ static void MX_GPIO_Init(void)
 /* USER CODE BEGIN 4 */
 //TODO: Mandelbroat using variable type integers and fixed point arithmetic
 uint64_t calculate_mandelbrot_fixed_point_arithmetic(int width, int height, int max_iterations){
-  uint64_t mandelbrot_sum = 0;
-    //TODO: Complete the function implementation
-    
-    return mandelbrot_sum;
+    uint64_t mandelbrot_sum = 0;
 
+    int64_t S = 65536;           // 2^16
+    int64_t Four = 4 * S;        // 4 scaled
+
+    for (int y = 0; y < height; y++){
+        for (int x = 0; x < width; x++){
+            int64_t x0 = ((7 * x * S) / (2 * width)) - (5 * S) / 2;  // 3.5 = 7/2, 2.5 = 5/2
+            int64_t y0 = (2 * S * y) / height - (1 * S);
+
+            int64_t xi = 0, yi = 0;
+            int iteration = 0;
+
+            while (iteration < max_iterations){
+                int64_t xi2 = (xi * xi) / S;
+                int64_t yi2 = (yi * yi) / S;
+
+                if ((xi2 + yi2) > Four) break;
+
+                int64_t temp = xi2 - yi2;
+                yi = (2 * xi * yi) / S + y0;
+                xi = temp + x0;
+
+                iteration += 1;
+            }
+            mandelbrot_sum += (uint64_t)iteration;
+        }
+    }
+    return mandelbrot_sum;
 }
 
 //TODO: Mandelbroat using variable type double
 uint64_t calculate_mandelbrot_double(int width, int height, int max_iterations){
     uint64_t mandelbrot_sum = 0;
-    //TODO: Complete the function implementation
-    
+
+    for (int y = 0; y < height; ++y) {
+        double y0 = ((double)y / (double)height) * 2.0 - 1.0; //WRITE ABOUT Purtting Y herre!!!
+
+
+
+
+        //WRITE ABOUT Purtting Y herre!!!
+        //WRITE ABOUT Purtting Y herre!!!
+        //WRITE ABOUT Purtting Y herre!!!
+
+
+
+
+        for (int x = 0; x < width; ++x) {
+            double x0 = ((double)x / (double)width) * 3.5 - 2.5;
+
+            double xi = 0.0, yi = 0.0;
+            int iteration = 0;
+
+            while (iteration < max_iterations) {
+                double xi2 = xi * xi;
+                double yi2 = yi * yi;
+
+                if (xi2 + yi2 > 4.0) break;
+
+                double temp = xi2 - yi2;
+                yi = 2.0 * xi * yi + y0;
+                xi = temp + x0;
+
+                ++iteration;
+            }
+            mandelbrot_sum += (uint64_t)iteration;
+        }
+    }
     return mandelbrot_sum;
 }
-
 /* USER CODE END 4 */
 
 /**
