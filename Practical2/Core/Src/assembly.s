@@ -40,22 +40,38 @@ main_loop:
 	@ read ODR into temp register R3
 	LDR R3, [R1, #0x14]
 	@ make R3 and R2 values match
-	BIC R3, R3, R4 @this clears the last 8bits of the temp ODR
-	ANDS R2, R2, R4 @this ensures only last 8 bits of R2 are used
-	ORR R3, R3, R2 @ this makes R2 and R3 match, by or'ing the two
+	BICS R3, R4 @this clears the last 8bits of the temp ODR : R3 = R3 & (~0xFF)
+	ANDS R2, R4 @this ensures only last 8 bits of R2 are used: R2 = R2 & 0xFF
+	ORRS R3, R2 @ this makes R2 and R3 match, by or'ing the two : R3 = R3 | R2
 	@ write R3 back to ODR
 	STR R3, [R1, #0x14]
 	@ delay
 	BL delay
-	@ update R2
-	ADDS R2, R2, #1
-	ANDS  R2, R2, R4 @ wrap back after 255
-	B main_loop
 
+	@ update R2 - must check if SW0 is pressed or not
+	LDR R5, [R0, #0x10] @get IDR address and load into temp register R5
+	@make bitmask for SW0, use it to check if SW0 is pressed, i.e if PA0 bit=1
+	MOVS R6, #1 @ #1 = 0b00000001
+	ANDS R5, R6 @R5 (IDR) being anded with the bitmask to check if pa0 is on
+	@if R5 == 0, add 2, but if not, add one
+	CMP R5, #0
+	BEQ add_two
+
+	@defaul, add 1
+	ADDS R2, R2, #1
+	B wrap_value
+
+	add_two:
+		ADDS R2, R2, #2
+	wrap_value:
+		ANDS  R2, R2, R4 @ wrap R2 back after 255
+
+	B main_loop
 
 @write_leds:
 	@STR R2, [R1, #0x14]
 	@B main_loop
+
 
 
 
