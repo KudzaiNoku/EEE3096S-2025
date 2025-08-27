@@ -35,11 +35,26 @@ ASM_Main:
 @ TODO: Add code, labels and logic for button checks and LED patterns
 
 main_loop:
-
+	LDR R3, [R1, #0x14] @ reading ODR into temp register and clearing last 8 buts of ODR register
+	BIC R3, R3, #0xFF
+	ORR R3, R3, R2 & ~0xFF @ inserting LED value into last 8-bits, writing back to ODR
+	B write_leds
 
 write_leds:
 	STR R2, [R1, #0x14]
 	B main_loop
+
+
+
+@ --- delay subroutine: ~0.7 s if LONG_DELAY_CNT ≈ 1400000 ---
+@ uses R6 as the loop counter
+@ clobbers: R6
+delay:
+    LDR   R6, LONG_DELAY_CNT   @ load the literal value (from .word below)
+delay_loop:
+    SUBS  R6, #1               @ 1 cycle
+    BNE   delay_loop           @ ~3 cycles when taken, 1 when not
+    BX    LR                   @ return
 
 @ LITERALS; DO NOT EDIT
 	.align
