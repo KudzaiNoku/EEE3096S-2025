@@ -124,10 +124,13 @@ delay:
 	@ if bit of PA1 = 0, button has been pressed, R6 = short_delay_cnt
 	CMP R5, #0
 	BEQ short_delay
+
 	LDR R6, LONG_DELAY_CNT
+	B delay_loop
 
 	short_delay:
     	LDR   R6, SHORT_DELAY_CNT   @ load the literal value (from .word below)
+
 delay_loop:
     SUBS  R6, #1               @ 1 cycle
     BNE   delay_loop           @ ~3 cycles when taken, 1 when not

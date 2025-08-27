@@ -1,4 +1,4 @@
-ARM GAS  /var/folders/x_/yfy_rg3n3c35ccv6hx8_kwsm0000gn/T//ccJ0xKtg.s 			page 1
+ARM GAS  /var/folders/x_/yfy_rg3n3c35ccv6hx8_kwsm0000gn/T//ccqCuKk3.s 			page 1
 
 
    1              		.cpu cortex-m0
@@ -58,7 +58,7 @@ ARM GAS  /var/folders/x_/yfy_rg3n3c35ccv6hx8_kwsm0000gn/T//ccJ0xKtg.s 			page 1
   31:Core/Src/main.c **** 
   32:Core/Src/main.c **** /* USER CODE END PTD */
   33:Core/Src/main.c **** 
-ARM GAS  /var/folders/x_/yfy_rg3n3c35ccv6hx8_kwsm0000gn/T//ccJ0xKtg.s 			page 2
+ARM GAS  /var/folders/x_/yfy_rg3n3c35ccv6hx8_kwsm0000gn/T//ccqCuKk3.s 			page 2
 
 
   34:Core/Src/main.c **** /* Private define ------------------------------------------------------------*/
@@ -118,7 +118,7 @@ ARM GAS  /var/folders/x_/yfy_rg3n3c35ccv6hx8_kwsm0000gn/T//ccJ0xKtg.s 			page 1
   88:Core/Src/main.c **** 
   89:Core/Src/main.c ****   /* Initialize all configured peripherals */
   90:Core/Src/main.c ****   MX_GPIO_Init();
-ARM GAS  /var/folders/x_/yfy_rg3n3c35ccv6hx8_kwsm0000gn/T//ccJ0xKtg.s 			page 3
+ARM GAS  /var/folders/x_/yfy_rg3n3c35ccv6hx8_kwsm0000gn/T//ccqCuKk3.s 			page 3
 
 
   91:Core/Src/main.c ****   /* USER CODE BEGIN 2 */
@@ -178,7 +178,7 @@ ARM GAS  /var/folders/x_/yfy_rg3n3c35ccv6hx8_kwsm0000gn/T//ccJ0xKtg.s 			page 1
  145:Core/Src/main.c ****   */
  146:Core/Src/main.c **** static void MX_GPIO_Init(void)
  147:Core/Src/main.c **** {
-ARM GAS  /var/folders/x_/yfy_rg3n3c35ccv6hx8_kwsm0000gn/T//ccJ0xKtg.s 			page 4
+ARM GAS  /var/folders/x_/yfy_rg3n3c35ccv6hx8_kwsm0000gn/T//ccqCuKk3.s 			page 4
 
 
   26              		.loc 1 147 1 view -0
@@ -238,7 +238,7 @@ ARM GAS  /var/folders/x_/yfy_rg3n3c35ccv6hx8_kwsm0000gn/T//ccJ0xKtg.s 			page 1
   70 0028 02B0     		add	sp, sp, #8
   71              		@ sp needed
   72 002a 7047     		bx	lr
-ARM GAS  /var/folders/x_/yfy_rg3n3c35ccv6hx8_kwsm0000gn/T//ccJ0xKtg.s 			page 5
+ARM GAS  /var/folders/x_/yfy_rg3n3c35ccv6hx8_kwsm0000gn/T//ccqCuKk3.s 			page 5
 
 
   73              	.L3:
@@ -298,7 +298,7 @@ ARM GAS  /var/folders/x_/yfy_rg3n3c35ccv6hx8_kwsm0000gn/T//ccJ0xKtg.s 			page 1
   17:Drivers/CMSIS/Include/cmsis_gcc.h ****  *
   18:Drivers/CMSIS/Include/cmsis_gcc.h ****  * Unless required by applicable law or agreed to in writing, software
   19:Drivers/CMSIS/Include/cmsis_gcc.h ****  * distributed under the License is distributed on an AS IS BASIS, WITHOUT
-ARM GAS  /var/folders/x_/yfy_rg3n3c35ccv6hx8_kwsm0000gn/T//ccJ0xKtg.s 			page 6
+ARM GAS  /var/folders/x_/yfy_rg3n3c35ccv6hx8_kwsm0000gn/T//ccqCuKk3.s 			page 6
 
 
   20:Drivers/CMSIS/Include/cmsis_gcc.h ****  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -358,7 +358,7 @@ ARM GAS  /var/folders/x_/yfy_rg3n3c35ccv6hx8_kwsm0000gn/T//ccJ0xKtg.s 			page 1
   74:Drivers/CMSIS/Include/cmsis_gcc.h ****   struct __attribute__((packed)) T_UINT32 { uint32_t v; };
   75:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic pop
   76:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __UNALIGNED_UINT32(x)                  (((struct T_UINT32 *)(x))->v)
-ARM GAS  /var/folders/x_/yfy_rg3n3c35ccv6hx8_kwsm0000gn/T//ccJ0xKtg.s 			page 7
+ARM GAS  /var/folders/x_/yfy_rg3n3c35ccv6hx8_kwsm0000gn/T//ccqCuKk3.s 			page 7
 
 
   77:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
@@ -418,7 +418,7 @@ ARM GAS  /var/folders/x_/yfy_rg3n3c35ccv6hx8_kwsm0000gn/T//ccJ0xKtg.s 			page 1
  131:Drivers/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("cpsie i" : : : "memory");
  132:Drivers/CMSIS/Include/cmsis_gcc.h **** }
  133:Drivers/CMSIS/Include/cmsis_gcc.h **** 
-ARM GAS  /var/folders/x_/yfy_rg3n3c35ccv6hx8_kwsm0000gn/T//ccJ0xKtg.s 			page 8
+ARM GAS  /var/folders/x_/yfy_rg3n3c35ccv6hx8_kwsm0000gn/T//ccqCuKk3.s 			page 8
 
 
  134:Drivers/CMSIS/Include/cmsis_gcc.h **** 
@@ -478,7 +478,7 @@ ARM GAS  /var/folders/x_/yfy_rg3n3c35ccv6hx8_kwsm0000gn/T//ccJ0xKtg.s 			page 1
  139              		.loc 1 112 22 is_stmt 0 view .LVU23
  140 0004 3022     		movs	r2, #48
  141 0006 0021     		movs	r1, #0
-ARM GAS  /var/folders/x_/yfy_rg3n3c35ccv6hx8_kwsm0000gn/T//ccJ0xKtg.s 			page 9
+ARM GAS  /var/folders/x_/yfy_rg3n3c35ccv6hx8_kwsm0000gn/T//ccqCuKk3.s 			page 9
 
 
  142 0008 04A8     		add	r0, sp, #16
@@ -538,7 +538,7 @@ ARM GAS  /var/folders/x_/yfy_rg3n3c35ccv6hx8_kwsm0000gn/T//ccJ0xKtg.s 			page 1
  180 0034 0193     		str	r3, [sp, #4]
  132:Core/Src/main.c ****   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
  181              		.loc 1 132 3 is_stmt 1 view .LVU40
-ARM GAS  /var/folders/x_/yfy_rg3n3c35ccv6hx8_kwsm0000gn/T//ccJ0xKtg.s 			page 10
+ARM GAS  /var/folders/x_/yfy_rg3n3c35ccv6hx8_kwsm0000gn/T//ccqCuKk3.s 			page 10
 
 
  132:Core/Src/main.c ****   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
@@ -598,7 +598,7 @@ ARM GAS  /var/folders/x_/yfy_rg3n3c35ccv6hx8_kwsm0000gn/T//ccJ0xKtg.s 			page 1
  228              		.cfi_offset 4, -8
  229              		.cfi_offset 14, -4
   75:Core/Src/main.c **** 
-ARM GAS  /var/folders/x_/yfy_rg3n3c35ccv6hx8_kwsm0000gn/T//ccJ0xKtg.s 			page 11
+ARM GAS  /var/folders/x_/yfy_rg3n3c35ccv6hx8_kwsm0000gn/T//ccqCuKk3.s 			page 11
 
 
  230              		.loc 1 75 3 view .LVU51
@@ -636,20 +636,20 @@ ARM GAS  /var/folders/x_/yfy_rg3n3c35ccv6hx8_kwsm0000gn/T//ccJ0xKtg.s 			page 1
  257              		.file 8 "Core/Inc/assembly.h"
  258              		.file 9 "Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal.h"
  259              		.file 10 "<built-in>"
-ARM GAS  /var/folders/x_/yfy_rg3n3c35ccv6hx8_kwsm0000gn/T//ccJ0xKtg.s 			page 12
+ARM GAS  /var/folders/x_/yfy_rg3n3c35ccv6hx8_kwsm0000gn/T//ccqCuKk3.s 			page 12
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 main.c
-/var/folders/x_/yfy_rg3n3c35ccv6hx8_kwsm0000gn/T//ccJ0xKtg.s:19     .text.MX_GPIO_Init:00000000 $t
-/var/folders/x_/yfy_rg3n3c35ccv6hx8_kwsm0000gn/T//ccJ0xKtg.s:24     .text.MX_GPIO_Init:00000000 MX_GPIO_Init
-/var/folders/x_/yfy_rg3n3c35ccv6hx8_kwsm0000gn/T//ccJ0xKtg.s:76     .text.MX_GPIO_Init:0000002c $d
-/var/folders/x_/yfy_rg3n3c35ccv6hx8_kwsm0000gn/T//ccJ0xKtg.s:81     .text.Error_Handler:00000000 $t
-/var/folders/x_/yfy_rg3n3c35ccv6hx8_kwsm0000gn/T//ccJ0xKtg.s:87     .text.Error_Handler:00000000 Error_Handler
-/var/folders/x_/yfy_rg3n3c35ccv6hx8_kwsm0000gn/T//ccJ0xKtg.s:119    .text.SystemClock_Config:00000000 $t
-/var/folders/x_/yfy_rg3n3c35ccv6hx8_kwsm0000gn/T//ccJ0xKtg.s:125    .text.SystemClock_Config:00000000 SystemClock_Config
-/var/folders/x_/yfy_rg3n3c35ccv6hx8_kwsm0000gn/T//ccJ0xKtg.s:212    .text.main:00000000 $t
-/var/folders/x_/yfy_rg3n3c35ccv6hx8_kwsm0000gn/T//ccJ0xKtg.s:218    .text.main:00000000 main
+/var/folders/x_/yfy_rg3n3c35ccv6hx8_kwsm0000gn/T//ccqCuKk3.s:19     .text.MX_GPIO_Init:00000000 $t
+/var/folders/x_/yfy_rg3n3c35ccv6hx8_kwsm0000gn/T//ccqCuKk3.s:24     .text.MX_GPIO_Init:00000000 MX_GPIO_Init
+/var/folders/x_/yfy_rg3n3c35ccv6hx8_kwsm0000gn/T//ccqCuKk3.s:76     .text.MX_GPIO_Init:0000002c $d
+/var/folders/x_/yfy_rg3n3c35ccv6hx8_kwsm0000gn/T//ccqCuKk3.s:81     .text.Error_Handler:00000000 $t
+/var/folders/x_/yfy_rg3n3c35ccv6hx8_kwsm0000gn/T//ccqCuKk3.s:87     .text.Error_Handler:00000000 Error_Handler
+/var/folders/x_/yfy_rg3n3c35ccv6hx8_kwsm0000gn/T//ccqCuKk3.s:119    .text.SystemClock_Config:00000000 $t
+/var/folders/x_/yfy_rg3n3c35ccv6hx8_kwsm0000gn/T//ccqCuKk3.s:125    .text.SystemClock_Config:00000000 SystemClock_Config
+/var/folders/x_/yfy_rg3n3c35ccv6hx8_kwsm0000gn/T//ccqCuKk3.s:212    .text.main:00000000 $t
+/var/folders/x_/yfy_rg3n3c35ccv6hx8_kwsm0000gn/T//ccqCuKk3.s:218    .text.main:00000000 main
 
 UNDEFINED SYMBOLS
 memset
