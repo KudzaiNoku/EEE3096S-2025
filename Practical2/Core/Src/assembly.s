@@ -31,6 +31,7 @@ ASM_Main:
 	LDR R2, MODER_OUTPUT
 	STR R2, [R1, #0]
 	MOVS R2, #0         	@ NOTE: R2 will be dedicated to holding the value on the LEDs
+	MOVS  R4, #0xFF            @ mask = 0xFF
 
 @ TODO: Add code, labels and logic for button checks and LED patterns
 
@@ -39,8 +40,8 @@ main_loop:
 	@ read ODR into temp register R3
 	LDR R3, [R1, #0x14]
 	@ make R3 and R2 values match
-	BIC R3, R3, #0xFF @this clears the last 8bits of the temp ODR
-	ANDS R2, R2, #0xFF @this ensures only last 8 bits of R2 are used
+	BIC R3, R3, R4 @this clears the last 8bits of the temp ODR
+	ANDS R2, R2, R4 @this ensures only last 8 bits of R2 are used
 	ORR R3, R3, R2 @ this makes R2 and R3 match, by or'ing the two
 	@ write R3 back to ODR
 	STR R3, [R1, #0x14]
@@ -48,7 +49,7 @@ main_loop:
 	BL delay
 	@ update R2
 	ADDS R2, R2, #1
-	ANDS  R2, R2, #0xFF @ wrap back after 255
+	ANDS  R2, R2, R4 @ wrap back after 255
 	B main_loop
 
 
