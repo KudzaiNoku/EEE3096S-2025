@@ -1,0 +1,16 @@
+/build/
+/Debug/
+/Release/
+/.ipynb_checkpoints/
+/.settings/
+/.metadata/
+/.vscode/
+/.idea/
+*.elf
+*.bin
+*.hex
+*.map
+*.lst
+*.o
+*.d
+
