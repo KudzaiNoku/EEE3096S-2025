@@ -17,6 +17,8 @@
   */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
+
+//main.c 3A
 #include "main.h"
 #include <sys/stat.h>
 #include <errno.h>
