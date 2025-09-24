@@ -50,9 +50,25 @@
 // - Performance timing variables (e.g execution time, throughput, pixels per second, clock cycles)
 #define MAX_ITER 100
 volatile uint32_t start_time = 0, end_time = 0, execution_time = 0;
-volatile double throughput = 0.0;
-volatile uint64_t checksum = 0, cycles = 0;
+//volatile double throughput = 0.0;
+volatile uint64_t checksum = 0;
 const uint16_t img_dimensions[] = {128, 160, 192, 224, 256};
+typedef struct { uint16_t w, h; } ImgSize;
+
+/*
+static const ImgSize sizes[] = {
+		  // old squares for continuity
+		  {128,128}, {160,160}, {192,192}, {224,224}, {256,256},
+		  // non-square resolutions
+		  {320,240},   // QVGA
+		  {640,480},   // VGA
+		  {800,480},   // WVGA-ish
+		  {1024,768},  // XGA
+		  {1280,720},  // 720p
+		  {1920,1080}  // 1080p (Full HD)
+		};
+
+static const int SIZES = sizeof(sizes)/sizeof(sizes[0]); //sizeof(arg) = total bytes of arg */
 
 /* USER CODE END PV */
 
@@ -111,25 +127,25 @@ int main(void)
    while (1)
    {
  	  while (!ran){//ensures for-loop only runs once
- 		  for (int i = 0; i < 5; ++i) {
+ 		  for (int i = 0; i < SIZES; ++i) {
 
  			  //DOUBLE
- 		      int dimension = img_dimensions[i];
+ 		      int w = sizes[i].w;
+ 		      int h = sizes[i].h;
  		      //TODO: Visual indicator: Turn on LED0 to signal processing start
  		      GPIOB->ODR |= (1 << 0);             // LED0: start
  		      //TODO: Benchmark and Profile Performance
 
  		      start_time = HAL_GetTick();
- 		      checksum= calculate_mandelbrot_fixed_point_arithmetic(dimension, dimension, MAX_ITER);
- 		      //manually changed to "calculate_mandelbrot_double(dimension, dimension, MAX_ITER)"
- 		      //for fixed-point arithmetic mode to also be benchmarked
+ 		      checksum= calculate_mandelbrot_fixed_point_arithmetic(w, h, MAX_ITER);
+
  		      end_time = HAL_GetTick();
 
  		      execution_time = end_time - start_time;
 
- 		      cycles = (uint64_t)execution_time * (SystemCoreClock / 1000u);  // approximate cycles
- 		      double seconds = execution_time / 1000.0;
- 		      throughput = (double)(dimension*dimension) / seconds; // gives number of pixels processed per second
+ 		      //cycles = (uint64_t)execution_time * (SystemCoreClock / 1000u);  // approximate cycles
+ 		      //double seconds = execution_time / 1000.0;
+ 		      //throughput = (double)(dimension*dimension) / seconds; // gives number of pixels processed per second
 
 
  		      GPIOB->ODR &= ~(1 << 0);

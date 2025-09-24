@@ -50,10 +50,25 @@
 //TODO: Define variables you think you might need
 // - Performance timing variables (e.g execution time, throughput, pixels per second, clock cycles)
 #define MAX_ITER 100
-volatile uint32_t start_time = 0, end_time = 0, execution_time = 0, cycles = 0;
-volatile double throughput;
+volatile uint32_t start_time = 0, end_time = 0, execution_time = 0;
+//volatile double throughput;
 volatile uint64_t checksum = 0;
 const uint16_t img_dimensions[] = {128, 160, 192, 224, 256};
+typedef struct { uint16_t w, h; } ImgSize;
+
+/*static const ImgSize sizes[] = {
+		  // old squares for continuity
+		  {128,128}, {160,160}, {192,192}, {224,224}, {256,256},
+		  // non-square resolutions
+		  {320,240},   // QVGA
+		  {640,480},   // VGA
+		  {800,480},   // WVGA-ish
+		  {1024,768},  // XGA
+		  {1280,720},  // 720p
+		  {1920,1080}  // 1080p (Full HD)
+		};
+
+static const int SIZES = sizeof(sizes)/sizeof(sizes[0]); //sizeof(arg) = total bytes of arg */
 
 /* USER CODE END PV */
 
@@ -66,11 +81,8 @@ static void MX_GPIO_Init(void);
 //TODO: Define any function prototypes you might need such as the calculate Mandelbrot function among others
 uint64_t calculate_mandelbrot_fixed_point_arithmetic(int width, int height, int max_iterations);
 uint64_t calculate_mandelbrot_double(int width, int height, int max_iterations);
-static inline void cycles_init(void){
-  CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;   // enable DWT
-  DWT->CYCCNT = 0;                                  // reset counter
-  DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;              // start counting
-}
+uint64_t calculate_mandelbrot_float(int width, int height, int max_iterations);
+
 
 
 /* USER CODE END PFP */
@@ -115,7 +127,8 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  cycles_init();
+
+
   int ran = 0;
   while (1)
   {
@@ -124,37 +137,31 @@ int main(void)
 
 			  //DOUBLE
 		      int dimension = img_dimensions[i];
+
 		      //TODO: Visual indicator: Turn on LED0 to signal processing start
 		      GPIOB->ODR |= (1 << 0);             // LED0: start
 		      //TODO: Benchmark and Profile Performance
-		      uint32_t c0 = DWT->CYCCNT;
-
 		      start_time = HAL_GetTick();
-		      checksum= calculate_mandelbrot_fixed_point_arithmetic(dimension, dimension, MAX_ITER);
+		      checksum= calculate_mandelbrot_float(dimension, dimension, MAX_ITER);
 		      end_time = HAL_GetTick();
 
-		      uint32_t c1 = DWT->CYCCNT;
-		      cycles = c1 - c0;
 		      execution_time = end_time - start_time;
-		      double seconds = (double)cycles / (double)SystemCoreClock;  // precise runtime
-		      uint32_t pixels = (uint32_t)dimension * (uint32_t)dimension;
-		      throughput = (double)pixels / seconds;   // gives number of pixels processed per second
-
 
 		      //TODO: Visual indicator: Turn on LED1 to signal processing end
 		      GPIOB->ODR |= (1 << 1);             // LED1: end
-
 		      //TODO: Keep the LEDs ON for 2s
+
 		      HAL_Delay(2000);
-		      // GPIOB->BSRR = (1u << (0 + 16)) | (1u << (1 + 16));
+			  //TODO: Turn OFF LEDs
+			  GPIOB->ODR &= ~(1 << 0);
+			  GPIOB->ODR &= ~(1 << 1);
+
 		  }
 
 		  ran = 1;
 
 	  }
-	  //TODO: Turn OFF LEDs
-	  GPIOB->ODR &= ~(1 << 0);
-	  GPIOB->ODR &= ~(1 << 1);
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -300,6 +307,37 @@ uint64_t calculate_mandelbrot_double(int width, int height, int max_iterations){
 
                 double temp = xi2 - yi2;
                 yi = 2.0 * xi * yi + y0;
+                xi = temp + x0;
+
+                ++iteration;
+            }
+            mandelbrot_sum += (uint64_t)iteration;
+        }
+    }
+    return mandelbrot_sum;
+}
+
+//addedd float version for task 5
+uint64_t calculate_mandelbrot_float(int width, int height, int max_iterations){
+    uint64_t mandelbrot_sum = 0;
+
+    for (int y = 0; y < height; ++y) {
+        float y0 = ((float)y / (float)height) * 2.0f - 1.0f;
+
+        for (int x = 0; x < width; ++x) {
+            float x0 = ((float)x / (float)width) * 3.5f - 2.5f;
+
+            float xi = 0.0f, yi = 0.0f;
+            int iteration = 0;
+
+            while (iteration < max_iterations) {
+                float xi2 = xi * xi;
+                float yi2 = yi * yi;
+
+                if (xi2 + yi2 > 4.0f) break;
+
+                float temp = xi2 - yi2;
+                yi = 2.0f * xi * yi + y0;
                 xi = temp + x0;
 
                 ++iteration;
