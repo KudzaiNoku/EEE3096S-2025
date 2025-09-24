@@ -22,6 +22,7 @@
 #include <stdint.h>
 #include <sys/stat.h>
 #include <errno.h>
+#include "core_cm4.h" //added for task 3
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -48,8 +49,9 @@
 /* USER CODE BEGIN PV */
 //TODO: Define variables you think you might need
 // - Performance timing variables (e.g execution time, throughput, pixels per second, clock cycles)
-#define MAX_ITER 250
-volatile uint32_t start_time = 0, end_time = 0, execution_time = 0;
+#define MAX_ITER 100
+volatile uint32_t start_time = 0, end_time = 0, execution_time = 0, cycles = 0;
+volatile double throughput;
 volatile uint64_t checksum = 0;
 const uint16_t img_dimensions[] = {128, 160, 192, 224, 256};
 
@@ -64,6 +66,11 @@ static void MX_GPIO_Init(void);
 //TODO: Define any function prototypes you might need such as the calculate Mandelbrot function among others
 uint64_t calculate_mandelbrot_fixed_point_arithmetic(int width, int height, int max_iterations);
 uint64_t calculate_mandelbrot_double(int width, int height, int max_iterations);
+static inline void cycles_init(void){
+  CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;   // enable DWT
+  DWT->CYCCNT = 0;                                  // reset counter
+  DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;              // start counting
+}
 
 
 /* USER CODE END PFP */
@@ -108,6 +115,7 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  cycles_init();
   int ran = 0;
   while (1)
   {
@@ -119,12 +127,19 @@ int main(void)
 		      //TODO: Visual indicator: Turn on LED0 to signal processing start
 		      GPIOB->ODR |= (1 << 0);             // LED0: start
 		      //TODO: Benchmark and Profile Performance
+		      uint32_t c0 = DWT->CYCCNT;
 
 		      start_time = HAL_GetTick();
-		      checksum= calculate_mandelbrot_double(dimension, dimension, MAX_ITER);
+		      checksum= calculate_mandelbrot_fixed_point_arithmetic(dimension, dimension, MAX_ITER);
 		      end_time = HAL_GetTick();
 
+		      uint32_t c1 = DWT->CYCCNT;
+		      cycles = c1 - c0;
 		      execution_time = end_time - start_time;
+		      double seconds = (double)cycles / (double)SystemCoreClock;  // precise runtime
+		      uint32_t pixels = (uint32_t)dimension * (uint32_t)dimension;
+		      throughput = (double)pixels / seconds;   // gives number of pixels processed per second
+
 
 		      //TODO: Visual indicator: Turn on LED1 to signal processing end
 		      GPIOB->ODR |= (1 << 1);             // LED1: end

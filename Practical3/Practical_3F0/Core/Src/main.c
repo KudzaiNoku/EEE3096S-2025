@@ -50,7 +50,8 @@
 // - Performance timing variables (e.g execution time, throughput, pixels per second, clock cycles)
 #define MAX_ITER 100
 volatile uint32_t start_time = 0, end_time = 0, execution_time = 0;
-volatile uint64_t checksum = 0;
+volatile double throughput = 0.0;
+volatile uint64_t checksum = 0, cycles = 0;
 const uint16_t img_dimensions[] = {128, 160, 192, 224, 256};
 
 /* USER CODE END PV */
@@ -120,9 +121,16 @@ int main(void)
 
  		      start_time = HAL_GetTick();
  		      checksum= calculate_mandelbrot_fixed_point_arithmetic(dimension, dimension, MAX_ITER);
+ 		      //manually changed to "calculate_mandelbrot_double(dimension, dimension, MAX_ITER)"
+ 		      //for fixed-point arithmetic mode to also be benchmarked
  		      end_time = HAL_GetTick();
 
  		      execution_time = end_time - start_time;
+
+ 		      cycles = (uint64_t)execution_time * (SystemCoreClock / 1000u);  // approximate cycles
+ 		      double seconds = execution_time / 1000.0;
+ 		      throughput = (double)(dimension*dimension) / seconds; // gives number of pixels processed per second
+
 
  		      GPIOB->ODR &= ~(1 << 0);
 
@@ -138,7 +146,6 @@ int main(void)
 
  	  }
  	  //TODO: Turn OFF LEDs
-
  	  GPIOB->ODR &= ~(1 << 1);
      /* USER CODE END WHILE */
 
