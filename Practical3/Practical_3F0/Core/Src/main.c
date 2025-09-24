@@ -49,13 +49,13 @@
 //TODO: Define variables you think you might need
 // - Performance timing variables (e.g execution time, throughput, pixels per second, clock cycles)
 #define MAX_ITER 100
-volatile uint32_t start_time = 0, end_time = 0, execution_time = 0;
+volatile uint32_t start_time = 0, end_time = 0, execution_time = 0, total_runtime_ms= 0, t0 = 0, t1 = 0;
 //volatile double throughput = 0.0;
 volatile uint64_t checksum = 0;
 const uint16_t img_dimensions[] = {128, 160, 192, 224, 256};
+/*
 typedef struct { uint16_t w, h; } ImgSize;
 
-/*
 static const ImgSize sizes[] = {
 		  // old squares for continuity
 		  {128,128}, {160,160}, {192,192}, {224,224}, {256,256},
@@ -96,13 +96,13 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-
-  /* USER CODE END 1 */
+	  /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
+  t0 = HAL_GetTick();
 
   /* USER CODE BEGIN Init */
 
@@ -127,42 +127,44 @@ int main(void)
    while (1)
    {
  	  while (!ran){//ensures for-loop only runs once
- 		  for (int i = 0; i < SIZES; ++i) {
+
+ 		  for (int i = 0; i < 5; ++i) {
 
  			  //DOUBLE
- 		      int w = sizes[i].w;
- 		      int h = sizes[i].h;
+ 		      int w = img_dimensions[i];
+
  		      //TODO: Visual indicator: Turn on LED0 to signal processing start
- 		      GPIOB->ODR |= (1 << 0);             // LED0: start
+ 		      //GPIOB->ODR |= (1 << 0);             // LED0: start
  		      //TODO: Benchmark and Profile Performance
 
- 		      start_time = HAL_GetTick();
- 		      checksum= calculate_mandelbrot_fixed_point_arithmetic(w, h, MAX_ITER);
+ 		      //start_time = HAL_GetTick();
+ 		      checksum= calculate_mandelbrot_fixed_point_arithmetic(w, w, MAX_ITER);
 
- 		      end_time = HAL_GetTick();
+ 		      //end_time = HAL_GetTick();
 
- 		      execution_time = end_time - start_time;
+ 		      //execution_time = end_time - start_time;
 
  		      //cycles = (uint64_t)execution_time * (SystemCoreClock / 1000u);  // approximate cycles
  		      //double seconds = execution_time / 1000.0;
  		      //throughput = (double)(dimension*dimension) / seconds; // gives number of pixels processed per second
 
 
- 		      GPIOB->ODR &= ~(1 << 0);
+ 		      //GPIOB->ODR &= ~(1 << 0);
 
  		      //TODO: Visual indicator: Turn on LED1 to signal processing end
- 		      GPIOB->ODR |= (1 << 1);             // LED1: end
+ 		      //GPIOB->ODR |= (1 << 1);             // LED1: end
 
  		      //TODO: Keep the LEDs ON for 2s
- 		      HAL_Delay(2000);
+ 		      //HAL_Delay(2000);
  		      // GPIOB->BSRR = (1u << (0 + 16)) | (1u << (1 + 16));
  		  }
-
+ 		  t1 = HAL_GetTick();
+ 		  total_runtime_ms= t1 - t0;
  		  ran = 1;
 
  	  }
  	  //TODO: Turn OFF LEDs
- 	  GPIOB->ODR &= ~(1 << 1);
+ 	  //GPIOB->ODR &= ~(1 << 1);
      /* USER CODE END WHILE */
 
      /* USER CODE BEGIN 3 */
