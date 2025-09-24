@@ -49,7 +49,7 @@
 //TODO: Define variables you think you might need
 // - Performance timing variables (e.g execution time, throughput, pixels per second, clock cycles)
 #define MAX_ITER 100
-volatile uint32_t start_time = 0, end_time = 0, execution_time = 0, total_runtime_ms= 0, t0 = 0, t1 = 0;
+volatile uint32_t start_time = 0, end_time = 0, execution_time = 0;
 //volatile double throughput = 0.0;
 volatile uint64_t checksum = 0;
 const uint16_t img_dimensions[] = {128, 160, 192, 224, 256};
@@ -102,7 +102,7 @@ int main(void)
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
-  t0 = HAL_GetTick();
+
 
   /* USER CODE BEGIN Init */
 
@@ -137,12 +137,12 @@ int main(void)
  		      //GPIOB->ODR |= (1 << 0);             // LED0: start
  		      //TODO: Benchmark and Profile Performance
 
- 		      //start_time = HAL_GetTick();
+ 		      start_time = HAL_GetTick();
  		      checksum= calculate_mandelbrot_fixed_point_arithmetic(w, w, MAX_ITER);
 
- 		      //end_time = HAL_GetTick();
+ 		      end_time = HAL_GetTick();
 
- 		      //execution_time = end_time - start_time;
+ 		      execution_time = end_time - start_time;
 
  		      //cycles = (uint64_t)execution_time * (SystemCoreClock / 1000u);  // approximate cycles
  		      //double seconds = execution_time / 1000.0;
@@ -158,8 +158,8 @@ int main(void)
  		      //HAL_Delay(2000);
  		      // GPIOB->BSRR = (1u << (0 + 16)) | (1u << (1 + 16));
  		  }
- 		  t1 = HAL_GetTick();
- 		  total_runtime_ms= t1 - t0;
+ 		  //t1 = HAL_GetTick();
+
  		  ran = 1;
 
  	  }
@@ -252,7 +252,7 @@ static void MX_GPIO_Init(void)
 uint64_t calculate_mandelbrot_fixed_point_arithmetic(int width, int height, int max_iterations){
     uint64_t mandelbrot_sum = 0;
 
-    int64_t S = 65536;           // 2^16
+    int64_t S = 1000000;           // 2^16
     int64_t Four = 4 * S;        // 4 scaled
 
     for (int y = 0; y < height; y++){
